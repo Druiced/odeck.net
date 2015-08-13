@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>oDeck.network - Card Logging Database</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+
+		<nav class="navbar navbar-default navbar-static-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				        <span class="sr-only">Toggle navigation</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+					</button>
+
+
+					<a href="http://odeck.net" class="pull-left"><img src="img/oDeckIcon47.png"></a>
+					<a class="navbar-brand" href="http://odeck.net">oDeck.net - Logger</a>
+				</div>
+	    			
+	    			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      				
+	    			<form class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+
+			    			<input id="id" type="text" class="form-control" placeholder="sequence id" name="id">
+						</div>
+
+						<button type="submit" class="btn btn-default">Search</button>
+					</form>
+  			</div>
+		</nav>
+		<div class="container">
+		<div class="jumbotron">
+			<a href="https://itunes.apple.com/us/app/odeck-card-logger/id1005476510">
+			<h4>Download the app to start logging your hands:</h4>
+			<h4>oDeck on the Apple App Store for iOS
+			</a>
+			</h4>
+			<div id="post-detail" data-id="">
+		        <h1 id="post-detail-user"></h1>
+		        <small id="post-detail-date"></small>
+		        <p id="post-detail-sequence"></p>
+	     	</div>
+
+			<ul id="list-posts">
+	        <!--
+	          list of posts
+	          <li>
+	            <H3>Title
+	            <p>Content
+	        -->
+			</ul>
+		</div>
+
+	</div>
+
+	
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>	
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+
+	<script type="text/javascript">
+        Parse.initialize("Q7UvwoEPHbGikeMcQbrfnYy36Uw1m2xE3JwUvLog", "32pKOwxJLD25r8pjahUGVpIds0RTBdlFoWZ3Hy7Z");
+    
+        var oDeck = Parse.Object.extend("oDeck");
+
+        function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        // load specific sequence onload based on id url tag
+
+        function loadById() {
+        	console.log( "ready!" );
+			var id = getParameterByName('id');
+			var query = new Parse.Query(oDeck);
+			query.equalTo("objectId", id);
+			query.include("Username")
+			query.find({
+	            success: function(results){
+					var user = results[0].get("Username").getUsername();
+					var sequence = results[0].get("Sequence");
+					var date = results[0].createdAt;
+					var id = results[0].id;
+
+					$("#post-detail-user").html(user);
+					$("#post-detail-date").html(date.toString());
+					$("#post-detail-sequence").html(cardRender(sequence));
+					$("#post-detail").attr("data-id", id);
+              		$('#id').attr('placeholder', id);
+				}, error: function(error){
+            		console.log(error.message);
+					}
+			});
+		};
+
+
+		var cardRender = function(string) {
+			var output = '';
+			
+
+			for (var i = 0; i < string.length; i+= 2) {
+				// AD Blocker Workaround for Ace of Diamonds
+				if (string[i] == "A" && string[i+1] == "D") {
+					output += "<img src='img/Az.png'>";
+				} else {
+				output += "<img src='img/" + string[i] + string[i+1] + ".png'>";
+				}
+		    }
+			
+			return output;
+		}
+
+		function getPosts() {
+	        var query = new Parse.Query(oDeck)
+			query.descending("createdAt")
+			query.limit(10)
+			query.include("Username")
+
+			query.find({
+	            success: function(results){
+					var output = "";
+
+					for (var i in results) {
+		                var username = results[i].get("Username").getUsername();
+		                var sequence = results[i].get("Sequence");
+		                var id = results[i].id
+						output += "<li>";
+						output += "<h3><a href='?id="+id+"'>"+username+"</a></h3>";
+						output += cardRender(sequence);
+						output += "</li>";
+					}
+
+					$("#list-posts").html(output);
+
+				},
+				error: function(error){
+				console.log("Query Error:"+error.message);
+				}
+			});
+		}	
+
+
+        var id = getParameterByName('id');
+        console.log(id)
+        if (id == "") {
+			getPosts();
+        } else {
+        	loadById()
+        }
+
+    </script>
+
+</body>
+</html>

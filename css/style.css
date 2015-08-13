@@ -1,0 +1,9 @@
+.navbar-brand { 
+	padding-left: 25px;
+}
+
+.navbar-nav li a {
+	padding-top:10px !important; 
+	padding-bottom:10px !important;
+}
+
