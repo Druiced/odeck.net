@@ -6,65 +6,73 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/style.css">
-
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
 </head>
+
 <body>
-
-
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container-fluid">
-				<div class="navbar-header">
-
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-				        <span class="sr-only">Toggle navigation</span>
-				        <span class="icon-bar"></span>
-				        <span class="icon-bar"></span>
-				        <span class="icon-bar"></span>
-					</button>
-
-
-					<a href="http://odeck.net" class="pull-left"><img src="img/oDeckIcon47.png"></a>
-					<a class="navbar-brand" href="http://odeck.net">oDeck.net - Logger</a>
+	<div class="container">
+		<div class="header clearfix">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="http://odeck.net">
+				<span>
+					<img src="img/oDeckIcon47.png">
+				</span>
+				oDeck.network
+				</a>
+			</div>
+   			<form class="navbar-form navbar-right" role="search">
+				<div class="form-group">
+					<div class="input-group">
+						<input id="id" type="text" class="form-control" placeholder="sequence id" name="id">
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-default">Search</button>
+						</span>
+					</div>
 				</div>
-	    			
-	    			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      				
-	    			<form class="navbar-form navbar-right" role="search">
-						<div class="form-group">
+			</form>
+		</div>
 
-			    			<input id="id" type="text" class="form-control" placeholder="sequence id" name="id">
-						</div>
-
-						<button type="submit" class="btn btn-default">Search</button>
-					</form>
-  			</div>
-		</nav>
-		<div class="container">
 		<div class="jumbotron">
-			<a href="https://itunes.apple.com/us/app/odeck-card-logger/id1005476510">
-			<h4>Download the app to start logging your hands:</h4>
-			<h4>oDeck on the Apple App Store for iOS
+			<a href="https://geo.itunes.apple.com/us/app/odeck-card-logger/id1005476510?mt=8">
+			<img class="img-responsive center-block" src="http://linkmaker.itunes.apple.com/images/badges/en-us/badge_appstore-lrg.svg">
 			</a>
-			</h4>
-			<div id="post-detail" data-id="">
-		        <h1 id="post-detail-user"></h1>
-		        <small id="post-detail-date"></small>
-		        <p id="post-detail-sequence"></p>
-	     	</div>
 
-			<ul id="list-posts">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+					<div id="post-detail" data-id="">
+				        <h3 id="post-detail-user"></h3>
+		        		<h4 id="post-detail-date"></h4>
+		        	</div>
+		        	</h3>
+		        	<div class="panel-body">
+				        <p id="post-detail-sequence"></p>
+				        <h3 id="if-last-ten"></h3>
+	    		 	</div>
+				</div>
+	    	</div>
+
+
+			<div id="list-posts">
 	        <!--
 	          list of posts
 	          <li>
 	            <H3>Title
 	            <p>Content
 	        -->
-			</ul>
+			</div>
 		</div>
 
-	</div>
+		<footer class="footer">
+		<p>&copy; oDeck.net 2015</p>
+		</footer>
 
-	
+    </div> <!-- /container -->
+
 	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>	
 	<script src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script>
@@ -74,6 +82,8 @@
     
         var oDeck = Parse.Object.extend("oDeck");
 
+        // pull hash from url - should probably be able to do this without regex..
+
         function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -81,7 +91,7 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
 
-        // load specific sequence onload based on id url tag
+        // load sequence from url hash
 
         function loadById() {
         	console.log( "ready!" );
@@ -101,6 +111,7 @@
 					$("#post-detail-sequence").html(cardRender(sequence));
 					$("#post-detail").attr("data-id", id);
               		$('#id').attr('placeholder', id);
+
 				}, error: function(error){
             		console.log(error.message);
 					}
@@ -113,18 +124,21 @@
 			
 
 			for (var i = 0; i < string.length; i+= 2) {
-				// AD Blocker Workaround for Ace of Diamonds
+				
+				// AD Blocker workaround around for Ace of Diamonds
 				if (string[i] == "A" && string[i+1] == "D") {
 					output += "<img src='img/Az.png'>";
 				} else {
-				output += "<img src='img/" + string[i] + string[i+1] + ".png'>";
+					output += "<img src='img/" + string[i] + string[i+1] + ".png'>";
 				}
 		    }
-			
 			return output;
 		}
 
+		// Grab last 10 logged sequences
+
 		function getPosts() {
+			$("#if-last-ten").html("Last 10 Saved Sequences:");
 	        var query = new Parse.Query(oDeck)
 			query.descending("createdAt")
 			query.limit(10)
@@ -137,12 +151,20 @@
 					for (var i in results) {
 		                var username = results[i].get("Username").getUsername();
 		                var sequence = results[i].get("Sequence");
-		                var id = results[i].id
-						output += "<li>";
-						output += "<h3><a href='?id="+id+"'>"+username+"</a></h3>";
+		                var date = results[i].createdAt;
+		                var id = results[i].id;
+						output += "<div class='panel panel-primary'>";
+						output += "<div class='panel-heading'>";
+
+						output += "<h3 class='panel-title'><a href='?id="+id+"'>"+username+" - "+date+"</a></h3>";
+						output += "</div>";
+						output += "<div class='panel-body'>";
+
 						output += cardRender(sequence);
-						output += "</li>";
+						output += "</div>";
+						output += "</div>";
 					}
+
 
 					$("#list-posts").html(output);
 
@@ -153,6 +175,8 @@
 			});
 		}	
 
+		// if there is a url hash id, load that sequence, if not, load last 10
+		// don't need to define id so many times, change to global
 
         var id = getParameterByName('id');
         console.log(id)

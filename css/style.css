@@ -7,3 +7,11 @@
 	padding-bottom:10px !important;
 }
 
+.nav-center {
+    margin:0;
+    float:none;
+}
+
+.navbar-inner{
+    text-align:center;
+}
