@@ -1,3 +1,13 @@
+body {
+
+	height: 100%;
+	/* Background pattern from subtlepatterns.com */
+	background: url('../img/black_scales.png');
+	background: 
+		linear-gradient(rgba(196, 102, 0, 0.2), rgba(155, 89, 182, 0.2)),
+		url('../img/black_scales.png');
+}
+
 .navbar-brand { 
 	padding-left: 25px;
 }
