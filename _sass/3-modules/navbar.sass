@@ -1,0 +1,74 @@
+@mixin border-radius()
+  background-image: url(/assets/img/odecknet3.png)
+  background-repeat: no-repeat
+  background-position: center
+  animation-name: bounceInDown
+  animation-duration: 1s
+  animation-fill-mode: both
+
+// to deal with the bootstrap hidden and visible classes
+@media (min-width: 768px)
+  .header-logo
+    @include border-radius()
+
+@media (max-width: 767px)
+  .header-logo-sm
+    @include border-radius()
+
+.navbar
+  min-height: 64px !important
+  background-color: #fff
+  margin-bottom: 7px
+
+.navbar-right
+  margin-top: 8px
+
+.small-brand
+  margin-top: 12px
+
+.navbar-form
+  margin-top: 15px
+
+
+@media (max-width: 991px)
+  .navbar-right
+    margin-top: 2px
+  .navbar-form
+    margin-top: 17px
+  .small-brand
+    margin-top: 6px
+  .navbar-brand
+    padding: 0px
+    margin-left: 6px
+
+@keyframes bounceInDown
+  from, 60%, 75%, 90%, to
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000)
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000)
+
+
+  0%
+    opacity: 0
+    -webkit-transform: translate3d(0, -3000px, 0)
+    transform: translate3d(0, -3000px, 0)
+
+
+  60%
+    opacity: 1
+    -webkit-transform: translate3d(0, 25px, 0)
+    transform: translate3d(0, 25px, 0)
+
+
+  75%
+    -webkit-transform: translate3d(0, -10px, 0)
+    transform: translate3d(0, -10px, 0)
+
+
+  90%
+    -webkit-transform: translate3d(0, 5px, 0)
+    transform: translate3d(0, 5px, 0)
+
+
+  to
+    -webkit-transform: none
+    transform: none
